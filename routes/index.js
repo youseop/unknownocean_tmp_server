@@ -16,9 +16,28 @@ router.get("/api/unknownobjects", (req, res) => {
 
 // Save UnknownObject
 router.post("/api/unknownobject/add", (req, res) => {
+  console.log(
+    "req.body.relativeOceanPosition: ",
+    req.body.relativeOceanPosition,
+    typeof req.body.relativeOceanPosition
+  );
+  console.log(
+    "req.body.relativeOceanRotation: ",
+    req.body.relativeOceanRotation,
+    typeof req.body.relativeOceanRotation
+  );
+  console.log("req.body.scaleX", req.body.scaleX, typeof req.body.scaleX);
   const unknownObject = new UnknownObject({
-    positionx: req.body.positionx,
-    positiony: req.body.positiony,
+    relativeOceanPosition: req.body.relativeOceanPosition,
+    relativeOceanRotation: req.body.relativeOceanRotation,
+    additionalRot: req.body.additionalRot,
+    additionalHeight: req.body.additionalHeight,
+    scaleX: req.body.scaleX,
+    scaleY: req.body.scaleY,
+    scaleZ: req.body.scaleZ,
+    firstScaleX: req.body.firstScaleX,
+    firstScaleY: req.body.firstScaleY,
+    firstScaleZ: req.body.firstScaleZ,
   });
   unknownObject.save((err, data) => {
     if (!err)
