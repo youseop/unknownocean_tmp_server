@@ -10,7 +10,35 @@ const {
 router.get("/api/unknownobjects", (req, res) => {
   UnknownObjectArraySchema.find({}, (err, data) => {
     if (!err) {
-      res.send(data);
+      const unknownObjectArray = data[0].unknownObjectArray;
+      const pureUnknownObjectArray = [];
+      for (let i = 0; i < unknownObjectArray.length; i++) {
+        const unknownObject = unknownObjectArray[i];
+        const pureUnknownObject = {
+          originalFileName: unknownObject.originalFileName,
+          relativeOceanPosition: {
+            x: unknownObject.relativeOceanPosition.x,
+            y: unknownObject.relativeOceanPosition.y,
+            z: unknownObject.relativeOceanPosition.z,
+          },
+          relativeOceanRotation: {
+            x: unknownObject.relativeOceanRotation.x,
+            y: unknownObject.relativeOceanRotation.y,
+            z: unknownObject.relativeOceanRotation.z,
+            w: unknownObject.relativeOceanRotation.w,
+          },
+          additionalRot: unknownObject.additionalRot,
+          additionalHeight: unknownObject.additionalHeight,
+          scaleX: unknownObject.scaleX,
+          scaleY: unknownObject.scaleY,
+          scaleZ: unknownObject.scaleZ,
+          firstScaleX: unknownObject.firstScaleX,
+          firstScaleY: unknownObject.firstScaleY,
+          firstScaleZ: unknownObject.firstScaleZ,
+        };
+        pureUnknownObjectArray.push(pureUnknownObject);
+      }
+      res.send({ unknownObjectArray: pureUnknownObjectArray });
     } else {
       console.log("error occured while getting all unknown objects, err:", err);
     }
@@ -22,7 +50,6 @@ router.post("/api/unknownobject/add", (req, res) => {
   const { body } = req;
   const { unknownObjectArray } = body;
   const newUnknownObjectArray = [];
-  console.log("$$$$ body", body);
   for (let i = 0; i < unknownObjectArray.length; i++) {
     const unknownObject = unknownObjectArray[i];
     const newUnknownObject = new UnknownObjectSchema({
@@ -38,15 +65,13 @@ router.post("/api/unknownobject/add", (req, res) => {
       firstScaleY: unknownObject.firstScaleY,
       firstScaleZ: unknownObject.firstScaleZ,
     });
-    console.log("$$$$ newUnknownObject", newUnknownObject);
     newUnknownObjectArray.push(newUnknownObject);
   }
 
-  const dbUnknownObjectArray = new UnknownObjectArraySchema({
+  const unknownObjectArraySchema = new UnknownObjectArraySchema({
     unknownObjectArray: unknownObjectArray,
   });
-  console.log("dbUnknownObjectArray", dbUnknownObjectArray);
-  dbUnknownObjectArray.save((err, data) => {
+  unknownObjectArraySchema.save((err, data) => {
     if (!err)
       res.status(200).json({
         code: 200,
