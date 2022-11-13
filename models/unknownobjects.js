@@ -1,10 +1,54 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
+
+const RelativeOceanPosition = new Schema({
+  x: {
+    type: Number,
+    required: true,
+  },
+  y: {
+    type: Number,
+    required: true,
+  },
+  z: {
+    type: Number,
+    required: true,
+  },
+});
+
+const RelativeOceanRotation = new Schema({
+  x: {
+    type: Number,
+    required: true,
+  },
+  y: {
+    type: Number,
+    required: true,
+  },
+  z: {
+    type: Number,
+    required: true,
+  },
+  w: {
+    type: Number,
+    required: true,
+  },
+});
 
 //UnknownObject Shema
-
 const UnknownObject = mongoose.model("unknownobject", {
-  relativeOceanPosition: [Number],
-  relativeOceanRotation: [Number],
+  originalFileName: {
+    type: String,
+    required: true,
+  },
+  relativeOceanPosition: {
+    type: RelativeOceanPosition,
+    required: true,
+  },
+  relativeOceanRotation: {
+    type: RelativeOceanRotation,
+    required: true,
+  },
   additionalRot: {
     type: Number,
     required: true,

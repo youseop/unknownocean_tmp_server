@@ -17,6 +17,7 @@ router.get("/api/unknownobjects", (req, res) => {
 // Save UnknownObject
 router.post("/api/unknownobject/add", (req, res) => {
   const unknownObject = new UnknownObject({
+    originalFileName: req.body.originalFileName,
     relativeOceanPosition: req.body.relativeOceanPosition,
     relativeOceanRotation: req.body.relativeOceanRotation,
     additionalRot: req.body.additionalRot,
