@@ -1,11 +1,14 @@
 const express = require("express");
 const router = express.Router();
 
-const { UnknownObject } = require("../models/unknownobjects");
+const {
+  UnknownObjectArraySchema,
+  UnknownObjectSchema,
+} = require("../models/unknownobjects");
 
 // Get All Objects
 router.get("/api/unknownobjects", (req, res) => {
-  UnknownObject.find({}, (err, data) => {
+  UnknownObjectArraySchema.find({}, (err, data) => {
     if (!err) {
       res.send(data);
     } else {
@@ -16,20 +19,34 @@ router.get("/api/unknownobjects", (req, res) => {
 
 // Save UnknownObject
 router.post("/api/unknownobject/add", (req, res) => {
-  const unknownObject = new UnknownObject({
-    originalFileName: req.body.originalFileName,
-    relativeOceanPosition: req.body.relativeOceanPosition,
-    relativeOceanRotation: req.body.relativeOceanRotation,
-    additionalRot: req.body.additionalRot,
-    additionalHeight: req.body.additionalHeight,
-    scaleX: req.body.scaleX,
-    scaleY: req.body.scaleY,
-    scaleZ: req.body.scaleZ,
-    firstScaleX: req.body.firstScaleX,
-    firstScaleY: req.body.firstScaleY,
-    firstScaleZ: req.body.firstScaleZ,
+  const { body } = req;
+  const { unknownObjectArray } = body;
+  const newUnknownObjectArray = [];
+  console.log("$$$$ body", body);
+  for (let i = 0; i < unknownObjectArray.length; i++) {
+    const unknownObject = unknownObjectArray[i];
+    const newUnknownObject = new UnknownObjectSchema({
+      originalFileName: unknownObject.originalFileName,
+      relativeOceanPosition: unknownObject.relativeOceanPosition,
+      relativeOceanRotation: unknownObject.relativeOceanRotation,
+      additionalRot: unknownObject.additionalRot,
+      additionalHeight: unknownObject.additionalHeight,
+      scaleX: unknownObject.scaleX,
+      scaleY: unknownObject.scaleY,
+      scaleZ: unknownObject.scaleZ,
+      firstScaleX: unknownObject.firstScaleX,
+      firstScaleY: unknownObject.firstScaleY,
+      firstScaleZ: unknownObject.firstScaleZ,
+    });
+    console.log("$$$$ newUnknownObject", newUnknownObject);
+    newUnknownObjectArray.push(newUnknownObject);
+  }
+
+  const dbUnknownObjectArray = new UnknownObjectArraySchema({
+    unknownObjectArray: unknownObjectArray,
   });
-  unknownObject.save((err, data) => {
+  console.log("dbUnknownObjectArray", dbUnknownObjectArray);
+  dbUnknownObjectArray.save((err, data) => {
     if (!err)
       res.status(200).json({
         code: 200,
@@ -42,7 +59,7 @@ router.post("/api/unknownobject/add", (req, res) => {
 
 // Get Single UnknownObject by id
 router.get("/api/unknownobject/:id", (req, res) => {
-  UnknownObject.findById(req.params.id, (err, data) => {
+  UnknownObjectArraySchema.findById(req.params.id, (err, data) => {
     if (!err) {
       res.send(data);
     } else {
@@ -56,13 +73,10 @@ router.get("/api/unknownobject/:id", (req, res) => {
 
 // Update UnknownObject
 router.put("/api/unknownobject/edit/:id", (req, res) => {
-  const unknownObject = {
-    positionx: req.body.positionx,
-    positiony: req.body.positiony,
-  };
-  UnknownObject.findByIdAndUpdate(
+  const unknownObjectArray = { unknownObjectArray: [] };
+  UnknownObjectArraySchema.findByIdAndUpdate(
     req.params.id,
-    { $set: unknownObject },
+    { $set: unknownObjectArray },
     { new: true },
     (err, data) => {
       if (!err)
@@ -79,7 +93,7 @@ router.put("/api/unknownobject/edit/:id", (req, res) => {
 
 // Delete UnknownObject
 router.delete("/api/unknownobject/:id", (req, res) => {
-  UnknownObject.findByIdAndRemove(req.params.id, (err, data) => {
+  UnknownObjectArraySchema.findByIdAndRemove(req.params.id, (err, data) => {
     if (!err)
       res.status(200).json({
         code: 200,

@@ -36,7 +36,54 @@ const RelativeOceanRotation = new Schema({
 });
 
 //UnknownObject Shema
-const UnknownObject = mongoose.model("unknownobject", {
+const UnknownObject = {
+  originalFileName: {
+    type: String,
+    required: true,
+  },
+  relativeOceanPosition: {
+    type: RelativeOceanPosition,
+    required: true,
+  },
+  relativeOceanRotation: {
+    type: RelativeOceanRotation,
+    required: true,
+  },
+  additionalRot: {
+    type: Number,
+    required: true,
+  },
+  additionalHeight: {
+    type: Number,
+    required: true,
+  },
+  scaleX: {
+    type: Number,
+    required: true,
+  },
+  scaleY: {
+    type: Number,
+    required: true,
+  },
+  scaleZ: {
+    type: Number,
+    required: true,
+  },
+  firstScaleX: {
+    type: Number,
+    required: true,
+  },
+  firstScaleY: {
+    type: Number,
+    required: true,
+  },
+  firstScaleZ: {
+    type: Number,
+    required: true,
+  },
+};
+
+const UnknownObjectSchema = mongoose.model("unknownobject", {
   originalFileName: {
     type: String,
     required: true,
@@ -83,4 +130,12 @@ const UnknownObject = mongoose.model("unknownobject", {
   },
 });
 
-module.exports = { UnknownObject };
+//UnknownObject Shema
+const UnknownObjectArraySchema = mongoose.model("unknownobjectarrays", {
+  unknownObjectArray: {
+    type: [UnknownObject],
+    required: true,
+  },
+});
+
+module.exports = { UnknownObjectArraySchema, UnknownObjectSchema };
