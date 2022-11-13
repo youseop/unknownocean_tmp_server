@@ -47,6 +47,7 @@ router.get("/api/unknownobjects", (req, res) => {
 
 // Save UnknownObject
 router.post("/api/unknownobject/add", (req, res) => {
+  UnknownObjectArraySchema.deleteMany({}, (err, data) => {});
   const { body } = req;
   const { unknownObjectArray } = body;
   const newUnknownObjectArray = [];
