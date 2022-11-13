@@ -16,17 +16,6 @@ router.get("/api/unknownobjects", (req, res) => {
 
 // Save UnknownObject
 router.post("/api/unknownobject/add", (req, res) => {
-  console.log(
-    "req.body.relativeOceanPosition: ",
-    req.body.relativeOceanPosition,
-    typeof req.body.relativeOceanPosition
-  );
-  console.log(
-    "req.body.relativeOceanRotation: ",
-    req.body.relativeOceanRotation,
-    typeof req.body.relativeOceanRotation
-  );
-  console.log("req.body.scaleX", req.body.scaleX, typeof req.body.scaleX);
   const unknownObject = new UnknownObject({
     relativeOceanPosition: req.body.relativeOceanPosition,
     relativeOceanRotation: req.body.relativeOceanRotation,
