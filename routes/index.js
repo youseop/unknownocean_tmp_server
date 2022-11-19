@@ -46,7 +46,7 @@ router.get("/api/unknownobjects", (req, res) => {
 });
 
 // Save UnknownObject
-router.post("/api/unknownobject/add", (req, res) => {
+router.post("/api/unknownobjects/add", (req, res) => {
   UnknownObjectArraySchema.deleteMany({}, (err, data) => {});
   const { body } = req;
   const { unknownObjectArray } = body;
@@ -76,7 +76,7 @@ router.post("/api/unknownobject/add", (req, res) => {
     if (!err)
       res.status(200).json({
         code: 200,
-        massage: "UnknownObject is Added Successfully",
+        massage: "UnknownObjects is Added Successfully",
         addObject: data,
       });
     else console.log("error occured while posting unknown object, err:", err);
@@ -84,7 +84,7 @@ router.post("/api/unknownobject/add", (req, res) => {
 });
 
 // Get Single UnknownObject by id
-router.get("/api/unknownobject/:id", (req, res) => {
+router.get("/api/unknownobjects/:id", (req, res) => {
   UnknownObjectArraySchema.findById(req.params.id, (err, data) => {
     if (!err) {
       res.send(data);
@@ -98,7 +98,7 @@ router.get("/api/unknownobject/:id", (req, res) => {
 });
 
 // Update UnknownObject
-router.put("/api/unknownobject/edit/:id", (req, res) => {
+router.put("/api/unknownobjects/edit/:id", (req, res) => {
   const unknownObjectArray = { unknownObjectArray: [] };
   UnknownObjectArraySchema.findByIdAndUpdate(
     req.params.id,
@@ -118,7 +118,7 @@ router.put("/api/unknownobject/edit/:id", (req, res) => {
 });
 
 // Delete UnknownObject
-router.delete("/api/unknownobject/:id", (req, res) => {
+router.delete("/api/unknownobjects/:id", (req, res) => {
   UnknownObjectArraySchema.findByIdAndRemove(req.params.id, (err, data) => {
     if (!err)
       res.status(200).json({
