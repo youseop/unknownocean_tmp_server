@@ -8,12 +8,12 @@ const {
 
 // Get All Objects
 router.get("/api/unknownobjects", (req, res) => {
-  UnknownObjectArraySchema.find({}, (err, data) => {
+  UnknownObjectArraySchema.find({}, (error, data) => {
     if (data.length <= 0) {
       res.send({ unknownObjectArray: [] });
       return;
     }
-    if (!err) {
+    if (!error) {
       const unknownObjectArray = data[0].unknownObjectArray;
       const pureUnknownObjectArray = [];
       for (let i = 0; i < unknownObjectArray.length; i++) {
@@ -44,7 +44,11 @@ router.get("/api/unknownobjects", (req, res) => {
       }
       res.send({ unknownObjectArray: pureUnknownObjectArray });
     } else {
-      console.log("error occured while getting all unknown objects, err:", err);
+      res.status(500).json({
+        code: 500,
+        massage: "error occurred while get data from db",
+        error: error,
+      });
     }
   });
 });
@@ -63,43 +67,53 @@ router.post("/api/unknownobjects/add", async (req, res) => {
       });
     });
 
-  await deleteAll();
-
-  const { body } = req;
-  const { unknownObjectArray } = body;
-  const newUnknownObjectArray = [];
-  for (let i = 0; i < unknownObjectArray.length; i++) {
-    const unknownObject = unknownObjectArray[i];
-    const newUnknownObject = new UnknownObjectSchema({
-      originalFileName: unknownObject.originalFileName,
-      relativeOceanPosition: unknownObject.relativeOceanPosition,
-      relativeOceanRotation: unknownObject.relativeOceanRotation,
-      additionalRot: unknownObject.additionalRot,
-      additionalHeight: unknownObject.additionalHeight,
-      scaleX: unknownObject.scaleX,
-      scaleY: unknownObject.scaleY,
-      scaleZ: unknownObject.scaleZ,
-      firstScaleX: unknownObject.firstScaleX,
-      firstScaleY: unknownObject.firstScaleY,
-      firstScaleZ: unknownObject.firstScaleZ,
-    });
-    newUnknownObjectArray.push(newUnknownObject);
-  }
-
-  const unknownObjectArraySchema = new UnknownObjectArraySchema({
-    unknownObjectArray: unknownObjectArray,
-  });
-  unknownObjectArraySchema.save((err, data) => {
-    if (!err)
-      res.status(200).json({
-        code: 200,
-        massage: "UnknownObjects is Added Successfully",
-        addObject: data,
+  try {
+    await deleteAll();
+    const { body } = req;
+    const { unknownObjectArray } = body;
+    const newUnknownObjectArray = [];
+    for (let i = 0; i < unknownObjectArray.length; i++) {
+      const unknownObject = unknownObjectArray[i];
+      const newUnknownObject = new UnknownObjectSchema({
+        originalFileName: unknownObject.originalFileName,
+        relativeOceanPosition: unknownObject.relativeOceanPosition,
+        relativeOceanRotation: unknownObject.relativeOceanRotation,
+        additionalRot: unknownObject.additionalRot,
+        additionalHeight: unknownObject.additionalHeight,
+        scaleX: unknownObject.scaleX,
+        scaleY: unknownObject.scaleY,
+        scaleZ: unknownObject.scaleZ,
+        firstScaleX: unknownObject.firstScaleX,
+        firstScaleY: unknownObject.firstScaleY,
+        firstScaleZ: unknownObject.firstScaleZ,
       });
-    else console.log("error occured while posting unknown object, err:", err);
-  });
+      newUnknownObjectArray.push(newUnknownObject);
+    }
+
+    const unknownObjectArraySchema = new UnknownObjectArraySchema({
+      unknownObjectArray: unknownObjectArray,
+    });
+    unknownObjectArraySchema.save((error, data) => {
+      if (!err) {
+        res.status(200).json({
+          code: 200,
+          massage: "UnknownObjects is Added Successfully",
+          addObject: data,
+        });
+      } else {
+        throw error;
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      code: 500,
+      massage: "error occurred while save data in db",
+      error: error,
+    });
+  }
 });
 
+/*
 // Get Single UnknownObject by id
 router.get("/api/unknownobjects/:id", (req, res) => {
   UnknownObjectArraySchema.findById(req.params.id, (err, data) => {
@@ -146,5 +160,6 @@ router.delete("/api/unknownobjects/:id", (req, res) => {
     else console.log("error occured while deleting unknown object, err:", err);
   });
 });
+*/
 
 module.exports = router;
