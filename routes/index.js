@@ -94,7 +94,7 @@ router.post("/api/unknownobjects/add", async (req, res) => {
       unknownObjectArray: unknownObjectArray,
     });
     unknownObjectArraySchema.save((error, data) => {
-      if (!err) {
+      if (!error) {
         res.status(200).json({
           code: 200,
           massage: "UnknownObjects is Added Successfully",
