@@ -9,6 +9,10 @@ const {
 // Get All Objects
 router.get("/api/unknownobjects", (req, res) => {
   UnknownObjectArraySchema.find({}, (err, data) => {
+    if (data.length <= 0) {
+      res.send({ unknownObjectArray: [] });
+      return;
+    }
     if (!err) {
       const unknownObjectArray = data[0].unknownObjectArray;
       const pureUnknownObjectArray = [];
@@ -46,8 +50,21 @@ router.get("/api/unknownobjects", (req, res) => {
 });
 
 // Save UnknownObject
-router.post("/api/unknownobjects/add", (req, res) => {
-  UnknownObjectArraySchema.deleteMany({}, (err, data) => {});
+router.post("/api/unknownobjects/add", async (req, res) => {
+  const deleteAll = () =>
+    new Promise((resolve, reject) => {
+      UnknownObjectArraySchema.deleteMany({}, (err, data) => {
+        if (err) {
+          reject(err);
+        }
+        if (data) {
+          resolve(data);
+        }
+      });
+    });
+
+  await deleteAll();
+
   const { body } = req;
   const { unknownObjectArray } = body;
   const newUnknownObjectArray = [];
