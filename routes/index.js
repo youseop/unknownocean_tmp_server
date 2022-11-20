@@ -71,24 +71,6 @@ router.post("/api/unknownobjects/add", async (req, res) => {
     await deleteAll();
     const { body } = req;
     const { unknownObjectArray } = body;
-    const newUnknownObjectArray = [];
-    for (let i = 0; i < unknownObjectArray.length; i++) {
-      const unknownObject = unknownObjectArray[i];
-      const newUnknownObject = new UnknownObjectSchema({
-        originalFileName: unknownObject.originalFileName,
-        relativeOceanPosition: unknownObject.relativeOceanPosition,
-        relativeOceanRotation: unknownObject.relativeOceanRotation,
-        additionalRot: unknownObject.additionalRot,
-        additionalHeight: unknownObject.additionalHeight,
-        scaleX: unknownObject.scaleX,
-        scaleY: unknownObject.scaleY,
-        scaleZ: unknownObject.scaleZ,
-        firstScaleX: unknownObject.firstScaleX,
-        firstScaleY: unknownObject.firstScaleY,
-        firstScaleZ: unknownObject.firstScaleZ,
-      });
-      newUnknownObjectArray.push(newUnknownObject);
-    }
 
     const unknownObjectArraySchema = new UnknownObjectArraySchema({
       unknownObjectArray: unknownObjectArray,
