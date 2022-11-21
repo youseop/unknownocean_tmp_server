@@ -16,6 +16,21 @@ const RelativeOceanPosition = new Schema({
   },
 });
 
+const controlPointPosition = new Schema({
+  x: {
+    type: Number,
+    required: true,
+  },
+  y: {
+    type: Number,
+    required: true,
+  },
+  z: {
+    type: Number,
+    required: true,
+  },
+});
+
 const RelativeOceanRotation = new Schema({
   x: {
     type: Number,
@@ -81,6 +96,34 @@ const UnknownObject = {
     type: Number,
     required: true,
   },
+  rotatingSpeed: {
+    type: Number,
+    required: true,
+  },
+  artworkScale: {
+    type: Number,
+    required: true,
+  },
+  verticalSpeed: {
+    type: Number,
+    required: true,
+  },
+  maxDeltaY: {
+    type: Number,
+    required: true,
+  },
+  controlPointPositions: {
+    type: [controlPointPosition],
+    required: true,
+  },
+  positionNum: {
+    type: Number,
+    required: true,
+  },
+  positionInterval: {
+    type: Number,
+    required: true,
+  },
 };
 
 const UnknownObjectSchema = mongoose.model("unknownobject", {
@@ -125,6 +168,34 @@ const UnknownObjectSchema = mongoose.model("unknownobject", {
     required: true,
   },
   firstScaleZ: {
+    type: Number,
+    required: true,
+  },
+  rotatingSpeed: {
+    type: Number,
+    required: true,
+  },
+  artworkScale: {
+    type: Number,
+    required: true,
+  },
+  verticalSpeed: {
+    type: Number,
+    required: true,
+  },
+  maxDeltaY: {
+    type: Number,
+    required: true,
+  },
+  controlPointPositions: {
+    type: [controlPointPosition],
+    required: true,
+  },
+  positionNum: {
+    type: Number,
+    required: true,
+  },
+  positionInterval: {
     type: Number,
     required: true,
   },
