@@ -18,6 +18,15 @@ router.get("/api/unknownobjects", (req, res) => {
       const pureUnknownObjectArray = [];
       for (let i = 0; i < unknownObjectArray.length; i++) {
         const unknownObject = unknownObjectArray[i];
+        const controlPointPositions = [];
+        for (let j = 0; j < unknownObject.controlPointPositions.length; j++) {
+          const controlPointPosition = unknownObject.controlPointPositions[j];
+          controlPointPositions.push({
+            x: controlPointPosition.x,
+            y: controlPointPosition.y,
+            z: controlPointPosition.z,
+          });
+        }
         const pureUnknownObject = {
           originalFileName: unknownObject.originalFileName,
           relativeOceanPosition: {
@@ -39,6 +48,13 @@ router.get("/api/unknownobjects", (req, res) => {
           firstScaleX: unknownObject.firstScaleX,
           firstScaleY: unknownObject.firstScaleY,
           firstScaleZ: unknownObject.firstScaleZ,
+          rotatingSpeed: unknownObject.rotatingSpeed,
+          artworkScale: unknownObject.artworkScale,
+          verticalSpeed: unknownObject.verticalSpeed,
+          maxDeltaY: unknownObject.maxDeltaY,
+          controlPointPositions: controlPointPositions,
+          positionNum: unknownObject.positionNum,
+          positionInterval: unknownObject.positionInterval,
         };
         pureUnknownObjectArray.push(pureUnknownObject);
       }
