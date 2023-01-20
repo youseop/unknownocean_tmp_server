@@ -55,9 +55,12 @@ router.get("/api/unknownobjects", (req, res) => {
           objectType: unknownObject.objectType,
           fileName: unknownObject.fileName,
           isItStartingObject: unknownObject.isItStartingObject,
-          mtlName: unknownObject.mtlName,
         };
-        pureUnknownObjectArray.push(pureUnknownObject);
+        pureUnknownObjectArray.push(
+          unknownObject.mtlName
+            ? { ...pureUnknownObject, mtlName: unknownObject.mtlName }
+            : pureUnknownObject
+        );
       }
       res.send({ unknownObjectArray: pureUnknownObjectArray });
     } else {

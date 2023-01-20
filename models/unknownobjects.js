@@ -138,7 +138,6 @@ const UnknownObject = {
   },
   mtlName: {
     type: String,
-    required: true,
   },
 };
 
