@@ -124,82 +124,23 @@ const UnknownObject = {
     type: Number,
     required: true,
   },
-};
-
-const UnknownObjectSchema = mongoose.model("unknownobject", {
-  originalFileName: {
+  objectType: {
     type: String,
     required: true,
   },
-  relativeOceanPosition: {
-    type: RelativeOceanPosition,
+  fileName: {
+    type: String,
     required: true,
   },
-  relativeOceanRotation: {
-    type: RelativeOceanRotation,
+  isItStartingObject: {
+    type: String,
     required: true,
   },
-  additionalRot: {
-    type: Number,
+  mtlName: {
+    type: String,
     required: true,
   },
-  additionalHeight: {
-    type: Number,
-    required: true,
-  },
-  scaleX: {
-    type: Number,
-    required: true,
-  },
-  scaleY: {
-    type: Number,
-    required: true,
-  },
-  scaleZ: {
-    type: Number,
-    required: true,
-  },
-  firstScaleX: {
-    type: Number,
-    required: true,
-  },
-  firstScaleY: {
-    type: Number,
-    required: true,
-  },
-  firstScaleZ: {
-    type: Number,
-    required: true,
-  },
-  rotatingSpeed: {
-    type: Number,
-    required: true,
-  },
-  artworkScale: {
-    type: Number,
-    required: true,
-  },
-  verticalSpeed: {
-    type: Number,
-    required: true,
-  },
-  maxDeltaY: {
-    type: Number,
-    required: true,
-  },
-  controlPointPositions: {
-    type: [controlPointPosition],
-    required: true,
-  },
-  positionNum: {
-    type: Number,
-    required: true,
-  },
-  positionInterval: {
-    type: Number,
-    required: true,
-  },
-});
+};
 
 //UnknownObject Shema
 const UnknownObjectArraySchema = mongoose.model("unknownobjectarrays", {
@@ -209,4 +150,4 @@ const UnknownObjectArraySchema = mongoose.model("unknownobjectarrays", {
   },
 });
 
-module.exports = { UnknownObjectArraySchema, UnknownObjectSchema };
+module.exports = { UnknownObjectArraySchema };

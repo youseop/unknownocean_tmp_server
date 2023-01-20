@@ -1,10 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const {
-  UnknownObjectArraySchema,
-  UnknownObjectSchema,
-} = require("../models/unknownobjects");
+const { UnknownObjectArraySchema } = require("../models/unknownobjects");
 
 // Get All Objects
 router.get("/api/unknownobjects", (req, res) => {
@@ -55,6 +52,10 @@ router.get("/api/unknownobjects", (req, res) => {
           controlPointPositions: controlPointPositions,
           positionNum: unknownObject.positionNum,
           positionInterval: unknownObject.positionInterval,
+          objectType: unknownObject.objectType,
+          fileName: unknownObject.fileName,
+          isItStartingObject: unknownObject.isItStartingObject,
+          mtlName: unknownObject.mtlName,
         };
         pureUnknownObjectArray.push(pureUnknownObject);
       }
