@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 2421293177
+CRC: 493841684
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: afa70ce18068b847e270d7083d382f54
+    Hash: 1d56f17828dc3115d87de2356a2d7421
   TypeTreeHash:
     serializedVersion: 2
     Hash: fee1c6e80ce93dc43c78a279afa71396
@@ -25,5 +25,5 @@ ClassTypes:
   Script: {instanceID: 0}
 SerializeReferenceClassIdentifiers: []
 Assets:
-- Assets/Resources/testy.prefab
+- Assets/Objects/test/uploads_files_907117_122.prefab
 Dependencies: []
