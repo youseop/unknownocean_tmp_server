@@ -115,6 +115,13 @@ router.post("/api/unknownobjects/add", async (req, res) => {
   }
 });
 
+// Get Single UnknownObject by id
+router.get("/api/asset-file/:id", (req, res) => {
+  console.log("__dirname", __dirname);
+  console.log(process.env.ROOT_DIR + "assetFiles/" + req.params.id);
+  res.sendFile(process.env.ROOT_DIR + "assetFiles/" + req.params.id);
+});
+
 /*
 // Get Single UnknownObject by id
 router.get("/api/unknownobjects/:id", (req, res) => {
