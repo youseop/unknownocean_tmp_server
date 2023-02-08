@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const path = require("path");
 
 const { UnknownObjectArraySchema } = require("../models/unknownobjects");
 
@@ -117,7 +118,7 @@ router.post("/api/unknownobjects/add", async (req, res) => {
 
 // Get Single file by file name
 router.get("/api/asset-file/:id", (req, res) => {
-  res.sendFile(process.env.ROOT_DIR + "assetFiles/" + req.params.id);
+  res.sendFile(path.resolve(`assetFiles/${req.params.id}`));
 });
 
 /*
