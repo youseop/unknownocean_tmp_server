@@ -1,0 +1,33 @@
+ManifestFileVersion: 0
+CRC: 840212882
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 9967adf0c6c4f9577759614e29a1422f
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 4ce005124c8aecb6596ad597d10b9fcf
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 90
+  Script: {instanceID: 0}
+- Class: 95
+  Script: {instanceID: 0}
+- Class: 137
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Space Suit Apolo 11/astronaut/White_Space Suit Apollo 11.prefab
+Dependencies: []
