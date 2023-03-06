@@ -147,6 +147,11 @@ const UnknownObjectArraySchema = mongoose.model("unknownobjectarrays", {
     type: [UnknownObject],
     required: true,
   },
+  oceanName: {
+    type: String,
+    required: true,
+    unique: true,
+  },
 });
 
 module.exports = { UnknownObjectArraySchema };

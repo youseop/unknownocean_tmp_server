@@ -5,10 +5,11 @@ const path = require("path");
 const { UnknownObjectArraySchema } = require("../models/unknownobjects");
 
 // Get All Objects
-router.get("/api/unknownobjects", (req, res) => {
-  UnknownObjectArraySchema.find({}, (error, data) => {
+router.get("/api/unknownobjects/:oceanname", (req, res) => {
+  const oceanName = req.params.oceanname;
+  UnknownObjectArraySchema.find({ oceanName: oceanName }, (error, data) => {
     if (data.length <= 0) {
-      res.send({ unknownObjectArray: [] });
+      res.send({ unknownObjectArray: undefined });
       return;
     }
     if (!error) {
@@ -76,37 +77,55 @@ router.get("/api/unknownobjects", (req, res) => {
 
 // Save UnknownObject
 router.post("/api/unknownobjects/add", async (req, res) => {
-  const deleteAll = () =>
-    new Promise((resolve, reject) => {
-      UnknownObjectArraySchema.deleteMany({}, (err, data) => {
-        if (err) {
-          reject(err);
+  try {
+    const { body } = req;
+    const { unknownObjectArray, oceanName } = body;
+
+    const data = await UnknownObjectArraySchema.find({ oceanName: oceanName });
+    if (data.length > 0) {
+      console.log("data exist, data: ", data);
+
+      const objectId = data[0]._id;
+      console.log("objectId: ", objectId);
+
+      UnknownObjectArraySchema.findByIdAndUpdate(
+        objectId,
+        {
+          unknownObjectArray: unknownObjectArray,
+        },
+        (error, data) => {
+          if (!error) {
+            res.status(200).json({
+              code: 200,
+              message: "UnknownObject is Updated Successfully",
+              updateObject: data,
+            });
+          } else {
+            console.log(
+              "error occured while updating unknown object, error:",
+              error
+            );
+            throw error;
+          }
         }
-        if (data) {
-          resolve(data);
+      );
+    } else {
+      const unknownObjectArraySchema = new UnknownObjectArraySchema({
+        unknownObjectArray: unknownObjectArray,
+        oceanName: oceanName,
+      });
+      unknownObjectArraySchema.save((error, data) => {
+        if (!error) {
+          res.status(200).json({
+            code: 200,
+            massage: `UnknownObjects is Added to ocean<${oceanName}> Successfully`,
+            addObject: data,
+          });
+        } else {
+          throw error;
         }
       });
-    });
-
-  try {
-    await deleteAll();
-    const { body } = req;
-    const { unknownObjectArray } = body;
-
-    const unknownObjectArraySchema = new UnknownObjectArraySchema({
-      unknownObjectArray: unknownObjectArray,
-    });
-    unknownObjectArraySchema.save((error, data) => {
-      if (!error) {
-        res.status(200).json({
-          code: 200,
-          massage: "UnknownObjects is Added Successfully",
-          addObject: data,
-        });
-      } else {
-        throw error;
-      }
-    });
+    }
   } catch (error) {
     res.status(500).json({
       code: 500,
