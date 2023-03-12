@@ -3,8 +3,9 @@ const router = express.Router();
 const path = require("path");
 
 const { UnknownObjectArraySchema } = require("../models/unknownobjects");
+const { NumberVariableSchema } = require("../models/numbervariable");
+const { filterObjectId } = require("../util");
 
-// Get All Objects
 router.get("/api/unknownobjects/:oceanname", (req, res) => {
   const oceanName = req.params.oceanname;
   UnknownObjectArraySchema.find({ oceanName: oceanName }, (error, data) => {
@@ -13,57 +14,7 @@ router.get("/api/unknownobjects/:oceanname", (req, res) => {
       return;
     }
     if (!error) {
-      const unknownObjectArray = data[0].unknownObjectArray;
-      const pureUnknownObjectArray = [];
-      for (let i = 0; i < unknownObjectArray.length; i++) {
-        const unknownObject = unknownObjectArray[i];
-        const controlPointPositions = [];
-        for (let j = 0; j < unknownObject.controlPointPositions.length; j++) {
-          const controlPointPosition = unknownObject.controlPointPositions[j];
-          controlPointPositions.push({
-            x: controlPointPosition.x,
-            y: controlPointPosition.y,
-            z: controlPointPosition.z,
-          });
-        }
-        const pureUnknownObject = {
-          originalFileName: unknownObject.originalFileName,
-          relativeOceanPosition: {
-            x: unknownObject.relativeOceanPosition.x,
-            y: unknownObject.relativeOceanPosition.y,
-            z: unknownObject.relativeOceanPosition.z,
-          },
-          relativeOceanRotation: {
-            x: unknownObject.relativeOceanRotation.x,
-            y: unknownObject.relativeOceanRotation.y,
-            z: unknownObject.relativeOceanRotation.z,
-            w: unknownObject.relativeOceanRotation.w,
-          },
-          additionalRot: unknownObject.additionalRot,
-          additionalHeight: unknownObject.additionalHeight,
-          scaleX: unknownObject.scaleX,
-          scaleY: unknownObject.scaleY,
-          scaleZ: unknownObject.scaleZ,
-          firstScaleX: unknownObject.firstScaleX,
-          firstScaleY: unknownObject.firstScaleY,
-          firstScaleZ: unknownObject.firstScaleZ,
-          rotatingSpeed: unknownObject.rotatingSpeed,
-          artworkScale: unknownObject.artworkScale,
-          verticalSpeed: unknownObject.verticalSpeed,
-          maxDeltaY: unknownObject.maxDeltaY,
-          controlPointPositions: controlPointPositions,
-          positionNum: unknownObject.positionNum,
-          positionInterval: unknownObject.positionInterval,
-          objectType: unknownObject.objectType,
-          fileName: unknownObject.fileName,
-          isItStartingObject: unknownObject.isItStartingObject,
-        };
-        pureUnknownObjectArray.push(
-          unknownObject.mtlName
-            ? { ...pureUnknownObject, mtlName: unknownObject.mtlName }
-            : pureUnknownObject
-        );
-      }
+      const pureUnknownObjectArray = filterObjectId(data[0].unknownObjectArray);
       res.send({ unknownObjectArray: pureUnknownObjectArray });
     } else {
       res.status(500).json({
@@ -138,6 +89,57 @@ router.post("/api/unknownobjects/add", async (req, res) => {
 // Get Single file by file name
 router.get("/api/asset-file/:id", (req, res) => {
   res.sendFile(path.resolve(`assetFiles/${req.params.id}`));
+});
+
+router.get("/api/gps-range-radius", (req, res) => {
+  NumberVariableSchema.find({ name: "gpsRangeRadius" }, (error, data) => {
+    if (!error) {
+      if (data.length === 0) {
+        res.send({ gpsRangeRadius: undefined });
+        return;
+      }
+      const gpsRangeRadius = data[0].value;
+      res.send({ gpsRangeRadius });
+    } else {
+      res.status(500).json({
+        code: 500,
+        massage:
+          "GET [gps-range-radius] : error occurred while get data from db",
+        error: error,
+      });
+    }
+  });
+});
+
+router.post("/api/gps-range-radius", async (req, res) => {
+  const { body } = req;
+  const { gpsRangeRadius } = body;
+
+  try {
+    // 있으면 업데이트 없으면 생성
+
+    NumberVariableSchema.findOneAndUpdate(
+      { name: "gpsRangeRadius" },
+      {
+        name: "gpsRangeRadius",
+        value: gpsRangeRadius,
+      },
+      { upsert: true },
+      (error, data) => {
+        if (!error) {
+          res.status(200).json({
+            code: 200,
+            massage: `gpsRangeRadius is upserted successfully`,
+            addObject: data,
+          });
+        } else {
+          throw error;
+        }
+      }
+    );
+  } catch (error) {
+    console.log("error in POST REQ, [api/gps-range-radius], error: ", error);
+  }
 });
 
 /*
