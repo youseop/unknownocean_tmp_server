@@ -4,7 +4,6 @@ const path = require("path");
 
 const { UnknownObjectArraySchema } = require("../models/unknownobjects");
 const { NumberVariableSchema } = require("../models/numbervariable");
-const { filterObjectId } = require("../util");
 
 router.get("/api/unknownobjects/:oceanname", (req, res) => {
   const oceanName = req.params.oceanname;
@@ -14,8 +13,63 @@ router.get("/api/unknownobjects/:oceanname", (req, res) => {
       return;
     }
     if (!error) {
-      const pureUnknownObjectArray = filterObjectId(data[0].unknownObjectArray);
-      res.send({ unknownObjectArray: pureUnknownObjectArray });
+      const { unknownObjectArray, latitude, longitude, oceanName } = data[0];
+      const pureUnknownObjectArray = [];
+      for (let i = 0; i < unknownObjectArray.length; i++) {
+        const unknownObject = unknownObjectArray[i];
+        const controlPointPositions = [];
+        for (let j = 0; j < unknownObject.controlPointPositions.length; j++) {
+          const controlPointPosition = unknownObject.controlPointPositions[j];
+          controlPointPositions.push({
+            x: controlPointPosition.x,
+            y: controlPointPosition.y,
+            z: controlPointPosition.z,
+          });
+        }
+        const pureUnknownObject = {
+          originalFileName: unknownObject.originalFileName,
+          relativeOceanPosition: {
+            x: unknownObject.relativeOceanPosition.x,
+            y: unknownObject.relativeOceanPosition.y,
+            z: unknownObject.relativeOceanPosition.z,
+          },
+          relativeOceanRotation: {
+            x: unknownObject.relativeOceanRotation.x,
+            y: unknownObject.relativeOceanRotation.y,
+            z: unknownObject.relativeOceanRotation.z,
+            w: unknownObject.relativeOceanRotation.w,
+          },
+          additionalRot: unknownObject.additionalRot,
+          additionalHeight: unknownObject.additionalHeight,
+          scaleX: unknownObject.scaleX,
+          scaleY: unknownObject.scaleY,
+          scaleZ: unknownObject.scaleZ,
+          firstScaleX: unknownObject.firstScaleX,
+          firstScaleY: unknownObject.firstScaleY,
+          firstScaleZ: unknownObject.firstScaleZ,
+          rotatingSpeed: unknownObject.rotatingSpeed,
+          artworkScale: unknownObject.artworkScale,
+          verticalSpeed: unknownObject.verticalSpeed,
+          maxDeltaY: unknownObject.maxDeltaY,
+          controlPointPositions: controlPointPositions,
+          positionNum: unknownObject.positionNum,
+          positionInterval: unknownObject.positionInterval,
+          objectType: unknownObject.objectType,
+          fileName: unknownObject.fileName,
+          isItStartingObject: unknownObject.isItStartingObject,
+        };
+        pureUnknownObjectArray.push(
+          unknownObject.mtlName
+            ? { ...pureUnknownObject, mtlName: unknownObject.mtlName }
+            : pureUnknownObject
+        );
+      }
+      res.send({
+        unknownObjectArray: pureUnknownObjectArray,
+        oceanName: oceanName,
+        latitude: latitude,
+        longitude: longitude,
+      });
     } else {
       res.status(500).json({
         code: 500,
