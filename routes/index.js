@@ -216,6 +216,34 @@ router.get("/api/location/:oceanname", (req, res) => {
   });
 });
 
+router.get("/api/every-location", (req, res) => {
+  LocationSchema.find({}, (error, data) => {
+    if (!error) {
+      if (data.length === 0) {
+        res.send({ locations: [] });
+        return;
+      }
+      const pureLocations = [];
+      for (let i = 0; i < data.length; i++) {
+        if (data[i] !== undefined) {
+          pureLocations.push({
+            name: data[i].name,
+            latitude: data[i].latitude,
+            longitude: data[i].longitude,
+          });
+        }
+      }
+      res.send({ locations: pureLocations });
+    } else {
+      res.status(500).json({
+        code: 500,
+        massage: "GET [location] : error occurred while get data from db",
+        error: error,
+      });
+    }
+  });
+});
+
 router.post("/api/location", async (req, res) => {
   const { body } = req;
   const { name, latitude, longitude } = body;
