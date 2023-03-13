@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const NumberVariableSchema = mongoose.model("gpsrangeradius", {
   value: {
     type: Number,
+    require: true,
   },
   name: {
     type: String,

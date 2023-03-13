@@ -4,6 +4,7 @@ const path = require("path");
 
 const { UnknownObjectArraySchema } = require("../models/unknownobjects");
 const { NumberVariableSchema } = require("../models/numbervariable");
+const { LocationSchema } = require("../models/location");
 
 router.get("/api/unknownobjects/:oceanname", (req, res) => {
   const oceanName = req.params.oceanname;
@@ -170,8 +171,6 @@ router.post("/api/gps-range-radius", async (req, res) => {
   const { gpsRangeRadius } = body;
 
   try {
-    // 있으면 업데이트 없으면 생성
-
     NumberVariableSchema.findOneAndUpdate(
       { name: "gpsRangeRadius" },
       {
@@ -193,6 +192,57 @@ router.post("/api/gps-range-radius", async (req, res) => {
     );
   } catch (error) {
     console.log("error in POST REQ, [api/gps-range-radius], error: ", error);
+  }
+});
+
+router.get("/api/location/:oceanname", (req, res) => {
+  const oceanName = req.params.oceanname;
+
+  LocationSchema.find({ name: oceanName }, (error, data) => {
+    if (!error) {
+      if (data.length === 0) {
+        res.send({ latitude: undefined, longitude: undefined });
+        return;
+      }
+      const { latitude, longitude } = data[0];
+      res.send({ latitude, longitude });
+    } else {
+      res.status(500).json({
+        code: 500,
+        massage: "GET [location] : error occurred while get data from db",
+        error: error,
+      });
+    }
+  });
+});
+
+router.post("/api/location", async (req, res) => {
+  const { body } = req;
+  const { name, latitude, longitude } = body;
+
+  try {
+    LocationSchema.findOneAndUpdate(
+      { name: name },
+      {
+        name: name,
+        latitude: latitude,
+        longitude: longitude,
+      },
+      { upsert: true },
+      (error, data) => {
+        if (!error) {
+          res.status(200).json({
+            code: 200,
+            massage: `location is upserted successfully`,
+            addObject: data,
+          });
+        } else {
+          throw error;
+        }
+      }
+    );
+  } catch (error) {
+    console.log("error in POST REQ, [api/location], error: ", error);
   }
 });
 
