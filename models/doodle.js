@@ -1,13 +1,48 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
+
+const RelativeOceanPosition = new Schema({
+  x: {
+    type: Number,
+    required: true,
+  },
+  y: {
+    type: Number,
+    required: true,
+  },
+  z: {
+    type: Number,
+    required: true,
+  },
+});
+
+const RelativeOceanRotation = new Schema({
+  x: {
+    type: Number,
+    required: true,
+  },
+  y: {
+    type: Number,
+    required: true,
+  },
+  z: {
+    type: Number,
+    required: true,
+  },
+  w: {
+    type: Number,
+    required: true,
+  },
+});
 
 //UnknownObject Shema
-const DoodleSchema = mongoose.model("doodle", {
+const DoodleObject = {
   relativeOceanPosition: {
-    type: [Number],
+    type: RelativeOceanPosition,
     require: true,
   },
   relativeOceanRotation: {
-    type: [Number],
+    type: RelativeOceanRotation,
     require: true,
   },
   linePositions: {
@@ -18,6 +53,18 @@ const DoodleSchema = mongoose.model("doodle", {
     type: Number,
     require: true,
   },
+};
+
+const DoodleArraySchema = mongoose.model("doodlearrays", {
+  doodleArray: {
+    type: [DoodleObject],
+    required: true,
+  },
+  oceanName: {
+    type: String,
+    required: true,
+    unique: true,
+  },
 });
 
-module.exports = { DoodleSchema };
+module.exports = { DoodleArraySchema };

@@ -5,7 +5,7 @@ const path = require("path");
 const { UnknownObjectArraySchema } = require("../models/unknownobjects");
 const { NumberVariableSchema } = require("../models/numbervariable");
 const { LocationSchema } = require("../models/location");
-const { DoodleSchema } = require("../models/doodle");
+const { DoodleSchema, DoodleArraySchema } = require("../models/doodle");
 
 router.get("/api/unknownobjects/:oceanname", (req, res) => {
   const oceanName = req.params.oceanname;
@@ -137,6 +137,115 @@ router.post("/api/unknownobjects/add", async (req, res) => {
     res.status(500).json({
       code: 500,
       massage: "error occurred while save data in db",
+      error: error,
+    });
+  }
+});
+
+// router.get("/api/unknownobjects/:oceanname", (req, res) => {
+//   const oceanName = req.params.oceanname;
+//   UnknownObjectArraySchema.find({ oceanName: oceanName }, (error, data) => {
+//     if (data.length <= 0) {
+//       res.send({ unknownObjectArray: undefined });
+//       return;
+//     }
+//     if (!error) {
+//       const { unknownObjectArray, latitude, longitude, oceanName } = data[0];
+//       const pureUnknownObjectArray = [];
+//       for (let i = 0; i < unknownObjectArray.length; i++) {
+//         const unknownObject = unknownObjectArray[i];
+//         const controlPointPositions = [];
+//         for (let j = 0; j < unknownObject.controlPointPositions.length; j++) {
+//           const controlPointPosition = unknownObject.controlPointPositions[j];
+//           controlPointPositions.push({
+//             x: controlPointPosition.x,
+//             y: controlPointPosition.y,
+//             z: controlPointPosition.z,
+//           });
+//         }
+//         const pureUnknownObject = {
+//           originalFileName: unknownObject.originalFileName,
+//           relativeOceanPosition: {
+//             x: unknownObject.relativeOceanPosition.x,
+//             y: unknownObject.relativeOceanPosition.y,
+//             z: unknownObject.relativeOceanPosition.z,
+//           },
+//           relativeOceanRotation: {
+//             x: unknownObject.relativeOceanRotation.x,
+//             y: unknownObject.relativeOceanRotation.y,
+//             z: unknownObject.relativeOceanRotation.z,
+//             w: unknownObject.relativeOceanRotation.w,
+//           },
+//           additionalRot: unknownObject.additionalRot,
+//           additionalHeight: unknownObject.additionalHeight,
+//           scaleX: unknownObject.scaleX,
+//           scaleY: unknownObject.scaleY,
+//           scaleZ: unknownObject.scaleZ,
+//           firstScaleX: unknownObject.firstScaleX,
+//           firstScaleY: unknownObject.firstScaleY,
+//           firstScaleZ: unknownObject.firstScaleZ,
+//           rotatingSpeed: unknownObject.rotatingSpeed,
+//           artworkScale: unknownObject.artworkScale,
+//           verticalSpeed: unknownObject.verticalSpeed,
+//           maxDeltaY: unknownObject.maxDeltaY,
+//           controlPointPositions: controlPointPositions,
+//           positionNum: unknownObject.positionNum,
+//           positionInterval: unknownObject.positionInterval,
+//           objectType: unknownObject.objectType,
+//           fileName: unknownObject.fileName,
+//           isItStartingObject: unknownObject.isItStartingObject,
+//         };
+//         pureUnknownObjectArray.push(
+//           unknownObject.mtlName
+//             ? { ...pureUnknownObject, mtlName: unknownObject.mtlName }
+//             : pureUnknownObject
+//         );
+//       }
+//       res.send({
+//         unknownObjectArray: pureUnknownObjectArray,
+//         oceanName: oceanName,
+//         latitude: latitude,
+//         longitude: longitude,
+//       });
+//     } else {
+//       res.status(500).json({
+//         code: 500,
+//         massage: "error occurred while get data from db",
+//         error: error,
+//       });
+//     }
+//   });
+// });
+
+// Save UnknownObject
+router.post("/api/doodle", async (req, res) => {
+  try {
+    const { body } = req;
+    const { doodleArray, oceanName } = body;
+
+    DoodleArraySchema.findOneAndUpdate(
+      { oceanName: oceanName },
+      {
+        oceanName: oceanName,
+        doodleArray: doodleArray,
+      },
+      { upsert: true },
+      (error, data) => {
+        if (!error) {
+          res.status(200).json({
+            code: 200,
+            massage: `location is upserted successfully`,
+            addObject: data,
+          });
+        } else {
+          throw error;
+        }
+      }
+    );
+  } catch (error) {
+    res.status(500).json({
+      code: 500,
+      massage: "error occurred while save doodle data in db",
       error: error,
     });
   }
