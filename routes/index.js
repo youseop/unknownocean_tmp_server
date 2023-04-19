@@ -5,6 +5,7 @@ const path = require("path");
 const { UnknownObjectArraySchema } = require("../models/unknownobjects");
 const { NumberVariableSchema } = require("../models/numbervariable");
 const { LocationSchema } = require("../models/location");
+const { DoodleSchema } = require("../models/doodle");
 
 router.get("/api/unknownobjects/:oceanname", (req, res) => {
   const oceanName = req.params.oceanname;
@@ -272,6 +273,68 @@ router.post("/api/location", async (req, res) => {
   } catch (error) {
     console.log("error in POST REQ, [api/location], error: ", error);
   }
+});
+
+router.post("/api/doodle", async (req, res) => {
+  const { body } = req;
+  const {
+    relativeOceanPosition,
+    relativeOceanRotation,
+    linePositions,
+    lineWeight,
+  } = body;
+
+  try {
+    const doodleSchema = new DoodleSchema({
+      relativeOceanPosition: relativeOceanPosition,
+      relativeOceanRotation: relativeOceanRotation,
+      linePositions: linePositions,
+      lineWeight: lineWeight,
+    });
+
+    doodleSchema.save((error, data) => {
+      if (!error) {
+        res.status(200).json({
+          code: 200,
+          massage: `doodle is Added Successfully`,
+          addObject: data,
+        });
+      } else {
+        throw error;
+      }
+    });
+  } catch (error) {
+    console.log("error in POST REQ, [api/doodle], error: ", error);
+  }
+});
+
+router.get("/api/doodle", (req, res) => {
+  DoodleSchema.find({}, (error, data) => {
+    if (!error) {
+      if (data.length === 0) {
+        res.send({ doodles: undefined });
+        return;
+      }
+      const pureDoodles = [];
+      for (let i = 0; i < data.length; i++) {
+        const doodle = data[i];
+        pureDoodles.push({
+          relativeOceanPosition: doodle.relativeOceanPosition,
+          relativeOceanRotation: doodle.relativeOceanRotation,
+          linePositions: doodle.linePositions,
+          lineWeight: doodle.lineWeight,
+        });
+      }
+
+      res.send({ doodleArray: pureDoodles });
+    } else {
+      res.status(500).json({
+        code: 500,
+        massage: "GET [location] : error occurred while get data from db",
+        error: error,
+      });
+    }
+  });
 });
 
 /*
