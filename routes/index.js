@@ -142,80 +142,48 @@ router.post("/api/unknownobjects/add", async (req, res) => {
   }
 });
 
-// router.get("/api/unknownobjects/:oceanname", (req, res) => {
-//   const oceanName = req.params.oceanname;
-//   UnknownObjectArraySchema.find({ oceanName: oceanName }, (error, data) => {
-//     if (data.length <= 0) {
-//       res.send({ unknownObjectArray: undefined });
-//       return;
-//     }
-//     if (!error) {
-//       const { unknownObjectArray, latitude, longitude, oceanName } = data[0];
-//       const pureUnknownObjectArray = [];
-//       for (let i = 0; i < unknownObjectArray.length; i++) {
-//         const unknownObject = unknownObjectArray[i];
-//         const controlPointPositions = [];
-//         for (let j = 0; j < unknownObject.controlPointPositions.length; j++) {
-//           const controlPointPosition = unknownObject.controlPointPositions[j];
-//           controlPointPositions.push({
-//             x: controlPointPosition.x,
-//             y: controlPointPosition.y,
-//             z: controlPointPosition.z,
-//           });
-//         }
-//         const pureUnknownObject = {
-//           originalFileName: unknownObject.originalFileName,
-//           relativeOceanPosition: {
-//             x: unknownObject.relativeOceanPosition.x,
-//             y: unknownObject.relativeOceanPosition.y,
-//             z: unknownObject.relativeOceanPosition.z,
-//           },
-//           relativeOceanRotation: {
-//             x: unknownObject.relativeOceanRotation.x,
-//             y: unknownObject.relativeOceanRotation.y,
-//             z: unknownObject.relativeOceanRotation.z,
-//             w: unknownObject.relativeOceanRotation.w,
-//           },
-//           additionalRot: unknownObject.additionalRot,
-//           additionalHeight: unknownObject.additionalHeight,
-//           scaleX: unknownObject.scaleX,
-//           scaleY: unknownObject.scaleY,
-//           scaleZ: unknownObject.scaleZ,
-//           firstScaleX: unknownObject.firstScaleX,
-//           firstScaleY: unknownObject.firstScaleY,
-//           firstScaleZ: unknownObject.firstScaleZ,
-//           rotatingSpeed: unknownObject.rotatingSpeed,
-//           artworkScale: unknownObject.artworkScale,
-//           verticalSpeed: unknownObject.verticalSpeed,
-//           maxDeltaY: unknownObject.maxDeltaY,
-//           controlPointPositions: controlPointPositions,
-//           positionNum: unknownObject.positionNum,
-//           positionInterval: unknownObject.positionInterval,
-//           objectType: unknownObject.objectType,
-//           fileName: unknownObject.fileName,
-//           isItStartingObject: unknownObject.isItStartingObject,
-//         };
-//         pureUnknownObjectArray.push(
-//           unknownObject.mtlName
-//             ? { ...pureUnknownObject, mtlName: unknownObject.mtlName }
-//             : pureUnknownObject
-//         );
-//       }
-//       res.send({
-//         unknownObjectArray: pureUnknownObjectArray,
-//         oceanName: oceanName,
-//         latitude: latitude,
-//         longitude: longitude,
-//       });
-//     } else {
-//       res.status(500).json({
-//         code: 500,
-//         massage: "error occurred while get data from db",
-//         error: error,
-//       });
-//     }
-//   });
-// });
+router.get("/api/doodle/:oceanname", (req, res) => {
+  const oceanName = req.params.oceanname;
+  DoodleArraySchema.find({ oceanName: oceanName }, (error, data) => {
+    if (data.length <= 0) {
+      res.send({ doodleArray: undefined });
+      return;
+    }
+    if (!error) {
+      const { doodleArray, oceanName } = data[0];
+      const pureDoodleArray = [];
+      for (let i = 0; i < doodleArray.length; i++) {
+        const doodle = doodleArray[i];
+        const pureDoodleObject = {
+          relativeOceanPosition: {
+            x: doodle.relativeOceanPosition.x,
+            y: doodle.relativeOceanPosition.y,
+            z: doodle.relativeOceanPosition.z,
+          },
+          relativeOceanRotation: {
+            x: doodle.relativeOceanRotation.x,
+            y: doodle.relativeOceanRotation.y,
+            z: doodle.relativeOceanRotation.z,
+            w: doodle.relativeOceanRotation.w,
+          },
+          linePositions: doodle.linePositions,
+          lineWeight: doodle.lineWeight,
+        };
+        pureDoodleArray.push(pureDoodleObject);
+      }
+      res.send({
+        doodleArray: pureDoodleArray,
+        oceanName: oceanName,
+      });
+    } else {
+      res.status(500).json({
+        code: 500,
+        massage: "error occurred while get data from db",
+        error: error,
+      });
+    }
+  });
+});
 
 // Save UnknownObject
 router.post("/api/doodle", async (req, res) => {
