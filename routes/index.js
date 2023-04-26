@@ -150,26 +150,28 @@ router.get("/api/doodle/:oceanname", (req, res) => {
       return;
     }
     if (!error) {
-      const { doodleArray, oceanName } = data[0];
       const pureDoodleArray = [];
-      for (let i = 0; i < doodleArray.length; i++) {
-        const doodle = doodleArray[i];
-        const pureDoodleObject = {
-          relativeOceanPosition: {
-            x: doodle.relativeOceanPosition.x,
-            y: doodle.relativeOceanPosition.y,
-            z: doodle.relativeOceanPosition.z,
-          },
-          relativeOceanRotation: {
-            x: doodle.relativeOceanRotation.x,
-            y: doodle.relativeOceanRotation.y,
-            z: doodle.relativeOceanRotation.z,
-            w: doodle.relativeOceanRotation.w,
-          },
-          linePositions: doodle.linePositions,
-          lineWeight: doodle.lineWeight,
-        };
-        pureDoodleArray.push(pureDoodleObject);
+      for (let j = 0; j < data.length; j++) {
+        const { doodleArray } = data[j];
+        for (let i = 0; i < doodleArray.length; i++) {
+          const doodle = doodleArray[i];
+          const pureDoodleObject = {
+            relativeOceanPosition: {
+              x: doodle.relativeOceanPosition.x,
+              y: doodle.relativeOceanPosition.y,
+              z: doodle.relativeOceanPosition.z,
+            },
+            relativeOceanRotation: {
+              x: doodle.relativeOceanRotation.x,
+              y: doodle.relativeOceanRotation.y,
+              z: doodle.relativeOceanRotation.z,
+              w: doodle.relativeOceanRotation.w,
+            },
+            linePositions: doodle.linePositions,
+            lineWeight: doodle.lineWeight,
+          };
+          pureDoodleArray.push(pureDoodleObject);
+        }
       }
       res.send({
         doodleArray: pureDoodleArray,
@@ -191,25 +193,22 @@ router.post("/api/doodle", async (req, res) => {
     const { body } = req;
     const { doodleArray, oceanName } = body;
 
-    DoodleArraySchema.findOneAndUpdate(
-      { oceanName: oceanName },
-      {
-        oceanName: oceanName,
-        doodleArray: doodleArray,
-      },
-      { upsert: true },
-      (error, data) => {
-        if (!error) {
-          res.status(200).json({
-            code: 200,
-            massage: `location is upserted successfully`,
-            addObject: data,
-          });
-        } else {
-          throw error;
-        }
+    const doodleArraySchema = new DoodleArraySchema({
+      oceanName: oceanName,
+      doodleArray: doodleArray,
+    });
+
+    doodleArraySchema.save((error, data) => {
+      if (!error) {
+        res.status(200).json({
+          code: 200,
+          massage: `doodleArray is Added Successfully`,
+          addObject: data,
+        });
+      } else {
+        throw error;
       }
-    );
+    });
   } catch (error) {
     res.status(500).json({
       code: 500,
@@ -350,68 +349,6 @@ router.post("/api/location", async (req, res) => {
   } catch (error) {
     console.log("error in POST REQ, [api/location], error: ", error);
   }
-});
-
-router.post("/api/doodle", async (req, res) => {
-  const { body } = req;
-  const {
-    relativeOceanPosition,
-    relativeOceanRotation,
-    linePositions,
-    lineWeight,
-  } = body;
-
-  try {
-    const doodleSchema = new DoodleSchema({
-      relativeOceanPosition: relativeOceanPosition,
-      relativeOceanRotation: relativeOceanRotation,
-      linePositions: linePositions,
-      lineWeight: lineWeight,
-    });
-
-    doodleSchema.save((error, data) => {
-      if (!error) {
-        res.status(200).json({
-          code: 200,
-          massage: `doodle is Added Successfully`,
-          addObject: data,
-        });
-      } else {
-        throw error;
-      }
-    });
-  } catch (error) {
-    console.log("error in POST REQ, [api/doodle], error: ", error);
-  }
-});
-
-router.get("/api/doodle", (req, res) => {
-  DoodleSchema.find({}, (error, data) => {
-    if (!error) {
-      if (data.length === 0) {
-        res.send({ doodles: undefined });
-        return;
-      }
-      const pureDoodles = [];
-      for (let i = 0; i < data.length; i++) {
-        const doodle = data[i];
-        pureDoodles.push({
-          relativeOceanPosition: doodle.relativeOceanPosition,
-          relativeOceanRotation: doodle.relativeOceanRotation,
-          linePositions: doodle.linePositions,
-          lineWeight: doodle.lineWeight,
-        });
-      }
-
-      res.send({ doodleArray: pureDoodles });
-    } else {
-      res.status(500).json({
-        code: 500,
-        massage: "GET [location] : error occurred while get data from db",
-        error: error,
-      });
-    }
-  });
 });
 
 /*

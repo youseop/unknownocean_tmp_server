@@ -63,7 +63,6 @@ const DoodleArraySchema = mongoose.model("doodlearrays", {
   oceanName: {
     type: String,
     required: true,
-    unique: true,
   },
 });
 
